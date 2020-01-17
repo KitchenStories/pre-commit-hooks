@@ -6,6 +6,13 @@ from typing import Optional
 from typing import Sequence
 
 
+def uncommented_line_in_print(line):
+    if 'print(' in line:
+        if line.find('#') == -1 or line.find('print(') < line.find('#'):
+            return True
+    return False
+
+
 def main(argv=None):  # type: (Optional[Sequence[str]]) -> int
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
@@ -15,9 +22,9 @@ def main(argv=None):  # type: (Optional[Sequence[str]]) -> int
 
     for filename in args.filenames:
         with open(filename, 'r') as f:
-            content = f.read()
-            if 'print(' in content:
-                print_files.append((filename))
+            for line in f:
+                if uncommented_line_in_print(line):
+                    print_files.append((filename))
 
     if print_files:
         for print_file in print_files:
